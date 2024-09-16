@@ -279,7 +279,6 @@ describe('ResultsContainer', () => {
       isSelected: false,
     })),
   }));
-
   beforeEach(() => {
     // cy.intercept() to mock API responses
   });

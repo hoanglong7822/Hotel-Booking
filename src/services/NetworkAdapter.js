@@ -11,7 +11,6 @@ class NetworkAdapter {
     const endpointURL = new URL(endpoint, NetworkAdapter.#API_URL);
     try {
       const url = new URL(endpointURL, window.location.origin);
-
       Object.entries(params).forEach(([key, value]) => {
         url.searchParams.append(key, value);
       });

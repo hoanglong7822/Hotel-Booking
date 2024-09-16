@@ -10,6 +10,8 @@ import { parse } from 'date-fns';
 import PaginationController from 'components/ux/pagination-controller/PaginationController';
 import { SORTING_FILTER_LABELS } from 'utils/constants';
 import _debounce from 'lodash/debounce';
+import apiService from 'services/request';
+// import apiService from 'services/request';
 
 /**
  * Represents the hotels search component.
@@ -38,7 +40,6 @@ const HotelsSearch = () => {
     data: [],
     errors: [],
   });
-
   // State for storing hotels search results
   const [hotelsResults, setHotelsResults] = useState({
     isLoading: true,
@@ -112,7 +113,6 @@ const HotelsSearch = () => {
       })
     );
   };
-
   const onDateChangeHandler = (ranges) => {
     setDateRange([ranges.selection]);
   };
@@ -190,7 +190,6 @@ const HotelsSearch = () => {
       setNumGuestsInputValue(numGuests);
     }
   };
-
   const onClearFiltersAction = () => {
     const hasActiveFilters = selectedFiltersState.some((filterGroup) =>
       filterGroup.filters.some((filter) => filter.isSelected)
@@ -221,7 +220,10 @@ const HotelsSearch = () => {
       data: [],
       errors: [],
     });
-    const hotelsResultsResponse = await networkAdapter.get('/api/hotels', {
+    console.log('filters', filters);
+    console.log('currentResultsPage', currentResultsPage);
+    console.log(sortByFilterValue.value);
+    const hotelsResultsResponse = await apiService.post('/api/hotels', {
       filters: JSON.stringify(filters),
       currentPage: currentResultsPage,
       advancedFilters: JSON.stringify([
@@ -230,6 +232,7 @@ const HotelsSearch = () => {
         },
       ]),
     });
+    console.log('hotelsResultsResponse', hotelsResultsResponse);
     if (hotelsResultsResponse) {
       setHotelsResults({
         isLoading: false,
@@ -242,8 +245,8 @@ const HotelsSearch = () => {
   };
 
   const getVerticalFiltersData = async () => {
-    const filtersDataResponse = await networkAdapter.get(
-      'api/hotels/verticalFilters'
+    const filtersDataResponse = await apiService.get(
+      '/api/hotels/verticalFilters'
     );
     if (filtersDataResponse) {
       setFiltersData({

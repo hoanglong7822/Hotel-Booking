@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
 import { LOGIN_MESSAGES } from 'utils/constants';
+import apiService from 'services/request';
 
 /**
  * Login Component
@@ -44,9 +45,9 @@ const Login = () => {
     e.preventDefault();
 
     if (validations.validate('email', loginData.email)) {
-      const response = await networkAdapter.post('api/users/login', loginData);
+      const response = await apiService.post('/api/users/login', loginData);
       if (response && response.data.token) {
-        context.triggerAuthCheck();
+        context.handleUpdateUser(response.data.userDetails);
         navigate('/user-profile');
       } else if (response && response.errors.length > 0) {
         setErrorMessage(response.errors[0]);

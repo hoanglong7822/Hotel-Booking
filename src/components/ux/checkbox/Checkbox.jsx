@@ -3,7 +3,6 @@ const Checkbox = (props) => {
   const onChange = () => {
     onFiltersUpdate({ filterId, id });
   };
-
   return (
     <div className="flex items-center pl-2 py-1" onClick={onChange}>
       <input

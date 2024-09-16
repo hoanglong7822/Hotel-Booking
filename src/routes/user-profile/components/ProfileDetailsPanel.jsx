@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Toast from 'components/ux/toast/Toast';
 import { networkAdapter } from 'services/NetworkAdapter';
 import Select from 'react-select';
+import apiService from 'services/request';
 
 /**
  * Renders the user profile details panel.
@@ -100,9 +101,8 @@ const ProfileDetailsPanel = ({ userDetails }) => {
 
   useEffect(() => {
     const fetchCountries = async () => {
-      const countriesData = await networkAdapter.get('/api/misc/countries');
+      const countriesData = await apiService.get('/api/misc/countries');
       if (countriesData && countriesData.data) {
-        console.log('countriesData', countriesData.data);
         const mappedValues = countriesData.data.elements.map((country) => ({
           label: country.name,
           value: country.name,

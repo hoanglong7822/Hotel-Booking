@@ -17,11 +17,7 @@ import ForgotPassword from './routes/forgot-password/ForgotPassword';
 import Checkout from 'routes/checkout/Checkout';
 import BookingConfirmation from 'routes/booking-confimation/BookingConifrmation';
 
-// if (process.env.NODE_ENV === 'development') {
-//   makeServer();
-// }
-
-makeServer();
+// makeServer();
 
 const router = createBrowserRouter([
   {
