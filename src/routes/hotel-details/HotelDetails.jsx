@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { networkAdapter } from 'services/NetworkAdapter';
 import HotelDetailsViewCard from './components/hotel-details-view-card/HotelDetailsViewCard';
 import HotelDetailsViewCardSkeleton from './components/hotel-details-view-card-skeleton/HotelDetailsViewCardSkeleton';
+import apiService from 'services/request';
 
 /**
  * Represents the hotel details component.
@@ -18,7 +18,7 @@ const HotelDetails = () => {
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
-      const response = await networkAdapter.get(`/api/hotel/${hotelId}`);
+      const response = await apiService.get(`/api/hotel/${hotelId}`);
       setHotelDetails({
         isLoading: false,
         data: response.data,
@@ -27,7 +27,6 @@ const HotelDetails = () => {
 
     fetchHotelDetails();
   }, [hotelId]);
-
   return (
     <>
       {hotelDetails.isLoading ? (

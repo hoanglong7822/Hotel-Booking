@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { differenceInCalendarDays } from 'date-fns';
 import DateRangePicker from 'components/ux/data-range-picker/DateRangePicker';
-import { networkAdapter } from 'services/NetworkAdapter';
 import { DEFAULT_TAX_DETAILS } from 'utils/constants';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { formatPrice } from 'utils/price-helpers';
 import Toast from 'components/ux/toast/Toast';
 import format from 'date-fns/format';
-
+import apiService from 'services/request';
+import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 /**
  * A component that displays the booking details for a hotel, including date range, room type, and pricing.
  *
@@ -18,10 +19,13 @@ import format from 'date-fns/format';
  */
 const HotelBookingDetailsCard = ({ hotelCode }) => {
   // State for date picker visibility
+
   const [isDatePickerVisible, setisDatePickerVisible] = useState(false);
 
   const navigate = useNavigate();
-
+  const userDetails = useSelector((state) => {
+    return state.auth.user;
+  });
   // State for error message
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -69,7 +73,6 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
       label: '1 King Bed Standard Non Smoking',
     },
   ];
-
   // Handlers for select changes
   const handleRoomTypeChange = (selectedOption) => {
     setSelectedRoom(selectedOption);
@@ -129,15 +132,26 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
     }
     const checkIn = format(dateRange[0].startDate, 'dd-MM-yyyy');
     const checkOut = format(dateRange[0].endDate, 'dd-MM-yyyy');
-    const queryParams = {
-      hotelCode,
-      checkIn,
-      checkOut,
-      guests: selectedGuests.value,
-      rooms: selectedRooms.value,
-      hotelName: bookingDetails.name.replaceAll(' ', '-'), // url friendly hotel name
-    };
-
+    const queryParams = userDetails
+      ? {
+          total,
+          userId: userDetails.id,
+          hotelCode,
+          checkIn,
+          checkOut,
+          guests: selectedGuests.value,
+          rooms: selectedRooms.value,
+          hotelName: bookingDetails.name.replaceAll(' ', '-'), // url friendly hotel name
+        }
+      : {
+          total,
+          hotelCode,
+          checkIn,
+          checkOut,
+          guests: selectedGuests.value,
+          rooms: selectedRooms.value,
+          hotelName: bookingDetails.name.replaceAll(' ', '-'), // url friendly hotel name
+        };
     const url = `/checkout?${queryString.stringify(queryParams)}`;
     navigate(url, {
       state: {
@@ -162,8 +176,8 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
   // Effect for fetching booking details
   useEffect(() => {
     const getBookingDetails = async () => {
-      const response = await networkAdapter.get(
-        `api/hotel/${hotelCode}/booking/enquiry`
+      const response = await apiService.get(
+        `/api/hotel/${hotelCode}/booking/enquiry`
       );
       if (response && response.data) {
         setBookingDetails(response.data);

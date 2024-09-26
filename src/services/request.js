@@ -1,9 +1,9 @@
 import axios from 'axios';
 const URL = 'http://localhost:3030';
 const apiService = {
-  async get(endpoint) {
+  async get(endpoint, params = {}) {
     try {
-      const data = await axios(URL + endpoint);
+      const data = await axios(URL + endpoint, params);
       return data.data;
     } catch (error) {
       return error;

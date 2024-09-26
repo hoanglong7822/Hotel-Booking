@@ -1,8 +1,9 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import DropdownButton from 'components/ux/dropdown-button/DropdownButton';
-import { networkAdapter } from 'services/NetworkAdapter';
-import { useContext } from 'react';
-import { AuthContext } from 'contexts/AuthContext';
+import apiService from 'services/request';
+import { store } from '../../redux/store';
+import { logOut } from '../../redux/actions';
+import { connect } from 'react-redux';
 
 /**
  * A component that renders the navigation items for the navbar for both mobile/desktop view.
@@ -11,22 +12,22 @@ import { AuthContext } from 'contexts/AuthContext';
  * @param {boolean} props.isAuthenticated - A flag indicating whether the user is authenticated.
  * @param {Function} props.onHamburgerMenuToggle
  */
-const NavbarItems = ({ isAuthenticated, onHamburgerMenuToggle }) => {
+const NavbarItems = ({ isAuthenticated, onHamburgerMenuToggle, auth }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const context = useContext(AuthContext);
-
   /**
    * Handles the logout action by calling the logout API and updating the authentication state.
    */
   const handleLogout = async () => {
-    await networkAdapter.post('api/users/logout');
-    context.triggerAuthCheck();
+    await apiService.post('api/users/logout');
+    store.dispatch(logOut());
     navigate('/login');
   };
-
   const dropdownOptions = [
-    { name: 'Profile', onClick: () => navigate('/user-profile') },
+    {
+      name: 'Profile',
+      onClick: () => navigate(`/user-profile/${auth.user.id}`),
+    },
     { name: 'Logout', onClick: handleLogout },
   ];
 
@@ -45,9 +46,7 @@ const NavbarItems = ({ isAuthenticated, onHamburgerMenuToggle }) => {
       <li className="p-4 hover:bg-blue-900 md:hover:bg-brand">
         <Link
           to="/"
-          className={`uppercase font-medium text-slate-100 hover-underline-animation ${
-            isActive('/') && 'active-link'
-          }`}
+          className={`uppercase font-medium text-slate-100 hover-underline-animation ${isActive('/') && 'active-link'}`}
           onClick={onHamburgerMenuToggle}
         >
           Home
@@ -96,4 +95,9 @@ const NavbarItems = ({ isAuthenticated, onHamburgerMenuToggle }) => {
   );
 };
 
-export default NavbarItems;
+const mapStatetoProps = (state) => {
+  return {
+    auth: state.auth,
+  };
+};
+export default connect(mapStatetoProps)(NavbarItems);

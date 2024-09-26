@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import GlobalSearchBox from 'components/global-search-box/GlobalSearchbox';
 import ResultsContainer from 'components/results-container/ResultsContainer';
-import { networkAdapter } from 'services/NetworkAdapter';
 import isEmpty from 'utils/helpers';
 import { MAX_GUESTS_INPUT_VALUE } from 'utils/constants';
 import { formatDate } from 'utils/date-helpers';
@@ -220,19 +219,15 @@ const HotelsSearch = () => {
       data: [],
       errors: [],
     });
-    console.log('filters', filters);
-    console.log('currentResultsPage', currentResultsPage);
-    console.log(sortByFilterValue.value);
     const hotelsResultsResponse = await apiService.post('/api/hotels', {
-      filters: JSON.stringify(filters),
+      filters: filters,
       currentPage: currentResultsPage,
-      advancedFilters: JSON.stringify([
+      advancedFilters: [
         {
           sortBy: sortByFilterValue.value,
         },
-      ]),
+      ],
     });
-    console.log('hotelsResultsResponse', hotelsResultsResponse);
     if (hotelsResultsResponse) {
       setHotelsResults({
         isLoading: false,
@@ -277,7 +272,7 @@ const HotelsSearch = () => {
 
   // Fetches the list of available cities
   const fetchAvailableCities = async () => {
-    const availableCitiesResponse = await networkAdapter.get(
+    const availableCitiesResponse = await apiService.get(
       '/api/availableCities'
     );
     if (availableCitiesResponse) {

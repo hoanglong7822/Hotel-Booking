@@ -1,8 +1,8 @@
 import HotelBookingDetailsCard from '../hotel-booking-details-card/HotelBookingDetailsCard';
 import UserReviews from '../user-reviews/UserReviews';
-import { networkAdapter } from 'services/NetworkAdapter';
 import React, { useEffect, useState } from 'react';
 import ReactImageGallery from 'react-image-gallery';
+import apiService from 'services/request';
 
 const HotelDetailsViewCard = ({ hotelDetails }) => {
   const images = hotelDetails.images.map((image) => ({
@@ -11,7 +11,6 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
     thumbnailClass: 'h-[80px]',
     thumbnailLoading: 'lazy',
   }));
-
   const [reviewData, setReviewData] = useState({
     isLoading: true,
     data: [],
@@ -35,18 +34,15 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
       return prev + 1;
     });
   };
-
   useEffect(() => {
     setReviewData({
       isLoading: true,
       data: [],
     });
     const fetchHotelReviews = async () => {
-      const response = await networkAdapter.get(
+      const response = await apiService.post(
         `/api/hotel/${hotelDetails.hotelCode}/reviews`,
-        {
-          currentPage: currentReviewsPage,
-        }
+        { currentPage: currentReviewsPage }
       );
       if (response && response.data) {
         setReviewData({
@@ -59,7 +55,6 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
     };
     fetchHotelReviews();
   }, [hotelDetails.hotelCode, currentReviewsPage]);
-
   return (
     <div className="flex items-start justify-center flex-wrap md:flex-nowrap container mx-auto p-4">
       <div className="w-[800px] bg-white shadow-lg rounded-lg overflow-hidden">
@@ -84,11 +79,12 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
               {hotelDetails.subtitle}
             </p>
             <div className="mt-2 space-y-2">
-              {hotelDetails.description.map((line, index) => (
+              <p className="text-gray-700">Mô tả</p>
+              {/* {hotelDetails.description.map((line, index) => (
                 <p key={index} className="text-gray-700">
                   {line}
                 </p>
-              ))}
+              ))} */}
             </div>
             <div className="flex justify-between items-center mt-4">
               <div>
@@ -99,7 +95,9 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
             </div>
           </div>
         </div>
+
         <UserReviews
+          hotelCode={hotelDetails.hotelCode}
           reviewData={reviewData}
           handlePageChange={handlePageChange}
           handlePreviousPageChange={handlePreviousPageChange}

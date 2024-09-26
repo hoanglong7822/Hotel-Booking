@@ -1,6 +1,4 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { networkAdapter } from 'services/NetworkAdapter';
-
 export const AuthContext = createContext();
 
 /**
@@ -11,31 +9,43 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
-  // const [authCheckTrigger, setAuthCheckTrigger] = useState(false);
+  const [authCheckTrigger, setAuthCheckTrigger] = useState(false);
+  const [response, setResponse] = useState({});
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      if (response && response.data) {
+        setIsAuthenticated(response.data.isAuthenticated);
+        setUserDetails(response.data.userDetails);
+      }
+    };
+    checkAuthStatus();
+  }, [authCheckTrigger, response]);
 
-  // useEffect(() => {
-  //   const checkAuthStatus = async () => {
-  //     const response = await networkAdapter.get('api/users/auth-user');
-  //     console.log("response",response)
-  //     if (response && response.data) {
-  //       setIsAuthenticated(response.data.isAuthenticated);
-  //       setUserDetails(response.data.userDetails);
-  //     }
-  //   };
-
-  //   checkAuthStatus();
-  // }, [authCheckTrigger]);
-
-  // const triggerAuthCheck = () => {
-  //   setAuthCheckTrigger((prev) => !prev);
-  // };
-  const handleUpdateUser = (data) => {
-    setIsAuthenticated(data.isAuthenticated);
-    setUserDetails(data);
+  const triggerAuthCheck = () => {
+    setAuthCheckTrigger((prev) => !prev);
+  };
+  const handleUpdateUser = (response) => {
+    setResponse(response);
+  };
+  const handleLogout = () => {
+    setResponse((prevState) => ({
+      ...prevState,
+      data: {
+        ...prevState.data,
+        isAuthenticated: false,
+      },
+    }));
+    setAuthCheckTrigger((prev) => !prev);
   };
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, userDetails, handleUpdateUser }}
+      value={{
+        isAuthenticated,
+        userDetails,
+        handleUpdateUser,
+        handleLogout,
+        triggerAuthCheck,
+      }}
     >
       {children}
     </AuthContext.Provider>

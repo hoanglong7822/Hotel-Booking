@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom';
 import HamburgerMenu from 'components/hamburger-menu/HamburgerMenu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from 'contexts/AuthContext';
 import { useContext } from 'react';
 import NavbarItems from 'components/navbar-items/NavbarItems';
-
-const GlobalNavbar = () => {
+import { useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+const GlobalNavbar = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext);
+  const isAuthenticated = useSelector((state) => {
+    return state.auth.authCheck;
+  });
   const onHamburgerMenuToggle = () => {
     setIsVisible(!isVisible);
   };
@@ -41,5 +43,9 @@ const GlobalNavbar = () => {
     </div>
   );
 };
-
-export default GlobalNavbar;
+const mapStatetoProps = (state) => {
+  return {
+    auth: state.auth,
+  };
+};
+export default connect(mapStatetoProps)(GlobalNavbar);

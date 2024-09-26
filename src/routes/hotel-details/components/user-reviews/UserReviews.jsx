@@ -6,7 +6,6 @@ import { networkAdapter } from 'services/NetworkAdapter';
 import Toast from 'components/ux/toast/Toast';
 import PaginationController from 'components/ux/pagination-controller/PaginationController';
 import Loader from 'components/ux/loader/loader';
-
 /**
  * Renders the user reviews component.
  *
@@ -15,6 +14,7 @@ import Loader from 'components/ux/loader/loader';
  * @returns {JSX.Element} The user reviews component.
  */
 const UserReviews = ({
+  hotelCode,
   reviewData,
   handlePageChange,
   handlePreviousPageChange,

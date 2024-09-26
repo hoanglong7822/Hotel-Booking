@@ -1,29 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { networkAdapter } from 'services/NetworkAdapter';
 import React, { useContext } from 'react';
-import { AuthContext } from 'contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
 import { LOGIN_MESSAGES } from 'utils/constants';
 import apiService from 'services/request';
-
-/**
- * Login Component
- * Renders a login form allowing users to sign in to their account.
- * It handles user input for email and password, submits login credentials to the server,
- * and navigates the user to their profile upon successful authentication.
- * Displays an error message for invalid login attempts.
- */
+import { store } from '../../redux/store';
+import { login } from '../../redux/actions';
 const Login = () => {
   const navigate = useNavigate();
-  const context = useContext(AuthContext);
+
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
   });
-
   const [errorMessage, setErrorMessage] = useState(false);
 
   /**
@@ -47,8 +38,10 @@ const Login = () => {
     if (validations.validate('email', loginData.email)) {
       const response = await apiService.post('/api/users/login', loginData);
       if (response && response.data.token) {
-        context.handleUpdateUser(response.data.userDetails);
-        navigate('/user-profile');
+        store.dispatch(login(response.data.userDetails));
+        const userId = response.data.userDetails.id;
+        console.log('userId', response.data.userDetails);
+        navigate(`/user-profile/${userId}`);
       } else if (response && response.errors.length > 0) {
         setErrorMessage(response.errors[0]);
       }

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { networkAdapter } from 'services/NetworkAdapter';
 import { useNavigate } from 'react-router-dom';
 import Toast from 'components/ux/toast/Toast';
 import { REGISTRATION_MESSAGES } from 'utils/constants';

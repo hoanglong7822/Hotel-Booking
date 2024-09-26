@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
-import { AuthContext } from 'contexts/AuthContext';
+import { useSelector } from 'react-redux';
 /**
  * Renders the user ratings selector component.
  *
@@ -24,7 +24,9 @@ const UserRatingsSelector = ({
   handleReviewSubmit,
   handleUserReviewChange,
 }) => {
-  const { isAuthenticated } = React.useContext(AuthContext);
+  const isAuthenticated = useSelector((state) => {
+    return state.auth.authCheck;
+  });
 
   return isAuthenticated ? (
     <div

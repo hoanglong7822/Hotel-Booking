@@ -6,9 +6,6 @@ import {
   faHotel,
   faCreditCard,
 } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from 'contexts/AuthContext';
-import { networkAdapter } from 'services/NetworkAdapter';
-import { useContext } from 'react';
 import PaymentMethodsPanel from './components/PaymentsMethodsPanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
@@ -17,19 +14,21 @@ import useOutsideClickHandler from 'hooks/useOutsideClickHandler';
 import { useNavigate } from 'react-router-dom';
 import BookingPanel from './components/BookingPanel';
 import ProfileDetailsPanel from './components/ProfileDetailsPanel';
-
+import apiService from 'services/request';
+// import { store } from '../../redux/store';
+import { useSelector } from 'react-redux';
 /**
  * UserProfile
  * Renders the user profile page with tabs for personal details, bookings, and payment methods.
  * @returns {JSX.Element} - The UserProfile component
  * */
 const UserProfile = () => {
-  const { userDetails } = useContext(AuthContext);
+  const userDetails = useSelector((state) => {
+    return state.auth.user;
+  });
   const navigate = useNavigate();
-
   const wrapperRef = useRef();
   const buttonRef = useRef();
-
   const [isTabsVisible, setIsTabsVisible] = useState(false);
 
   // Fetch user bookings data
@@ -62,15 +61,16 @@ const UserProfile = () => {
       navigate('/login');
     }
   }, [navigate, userDetails]);
-
   // effect to set initial state of user bookings data
   useEffect(() => {
     const getInitialData = async () => {
-      const userBookingsDataResponse = await networkAdapter.get(
-        '/api/users/bookings'
+      const userId = userDetails.id;
+      const userBookingsDataResponse = await apiService.post(
+        '/api/users/bookings',
+        { userId: userId }
       );
-      const userPaymentMethodsResponse = await networkAdapter.get(
-        'api/users/payment-methods'
+      const userPaymentMethodsResponse = await apiService.get(
+        '/api/users/payment-methods'
       );
       if (userBookingsDataResponse && userBookingsDataResponse.data) {
         setUserBookingsData({
@@ -88,7 +88,7 @@ const UserProfile = () => {
       }
     };
     getInitialData();
-  }, []);
+  }, [userDetails]);
 
   return (
     <>

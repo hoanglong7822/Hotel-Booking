@@ -1,12 +1,12 @@
 import HeroCover from './components/hero-cover/HeroCover';
 import PopularLocations from './components/popular-locations/popular-locations';
-import { networkAdapter } from 'services/NetworkAdapter';
 import { useState, useEffect, useCallback } from 'react';
 import { MAX_GUESTS_INPUT_VALUE } from 'utils/constants';
 import ResultsContainer from 'components/results-container/ResultsContainer';
 import { formatDate } from 'utils/date-helpers';
 import { useNavigate } from 'react-router-dom';
 import _debounce from 'lodash/debounce';
+import apiService from 'services/request';
 
 /**
  * Home component that renders the main page of the application.
@@ -108,13 +108,12 @@ const Home = () => {
      * @returns {Promise<void>} A promise that resolves when the data is fetched.
      */
     const getInitialData = async () => {
-      const popularDestinationsResponse = await networkAdapter.get(
+      const popularDestinationsResponse = await apiService.get(
         '/api/popularDestinations'
       );
-      const hotelsResultsResponse =
-        await networkAdapter.get('/api/nearbyHotels');
+      const hotelsResultsResponse = await apiService.get('/api/nearbyHotels');
 
-      const availableCitiesResponse = await networkAdapter.get(
+      const availableCitiesResponse = await apiService.get(
         '/api/availableCities'
       );
       if (availableCitiesResponse) {

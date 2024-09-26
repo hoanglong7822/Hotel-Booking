@@ -4,12 +4,10 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getReadableMonthFormat } from 'utils/date-helpers';
 import { useSearchParams } from 'react-router-dom';
-import { AuthContext } from 'contexts/AuthContext';
-import { useContext } from 'react';
-import { networkAdapter } from 'services/NetworkAdapter';
 import Loader from 'components/ux/loader/loader';
 import Toast from 'components/ux/toast/Toast';
-
+import apiService from 'services/request';
+import { useSelector } from 'react-redux';
 /**
  * Checkout component for processing payments and collecting user information.
  *
@@ -26,19 +24,38 @@ const Checkout = () => {
 
   const [toastMessage, setToastMessage] = useState('');
 
-  const { isAuthenticated, userDetails } = useContext(AuthContext);
-
+  const auth = useSelector((state) => {
+    return state.auth;
+  });
+  const isAuthenticated = auth.authCheck;
+  const userDetails = auth.user;
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const [paymentConfirmationDetails, setPaymentConfirmationDetails] = useState({
     isLoading: false,
     data: {},
   });
-
+  const checkIn = searchParams.get('checkIn');
+  const checkOut = searchParams.get('checkOut');
+  const guests = searchParams.get('guests');
+  const hotelCode = searchParams.get('hotelCode');
+  const hotelName = searchParams.get('hotelName');
+  const rooms = searchParams.get('rooms');
+  const userId = searchParams.get('userId');
+  const total = searchParams.get('total');
+  const checkoutData = {
+    total,
+    userId,
+    checkIn,
+    checkOut,
+    guests,
+    hotelCode,
+    hotelName,
+    rooms,
+  };
   const dismissToast = () => {
     setToastMessage('');
   };
-
   // Form state for collecting user payment and address information
   const [formData, setFormData] = useState({
     email: userDetails?.email ? userDetails?.email : '',
@@ -114,11 +131,14 @@ const Checkout = () => {
       isLoading: true,
       data: {},
     });
-    const response = await networkAdapter.post(
+    const response = await apiService.post(
       '/api/payments/confirmation',
       formData
     );
     if (response && response.data && response.errors.length === 0) {
+      if (checkoutData) {
+        await apiService.post('/api/users/createBooking', checkoutData);
+      }
       setPaymentConfirmationDetails({
         isLoading: false,
         data: response.data,
