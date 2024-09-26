@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import HamburgerMenu from 'components/hamburger-menu/HamburgerMenu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { useContext } from 'react';
 import NavbarItems from 'components/navbar-items/NavbarItems';
 import { useSelector } from 'react-redux';
 import { connect } from 'react-redux';

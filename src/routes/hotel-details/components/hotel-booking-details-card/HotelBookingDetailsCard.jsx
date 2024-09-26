@@ -9,7 +9,6 @@ import { formatPrice } from 'utils/price-helpers';
 import Toast from 'components/ux/toast/Toast';
 import format from 'date-fns/format';
 import apiService from 'services/request';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 /**
  * A component that displays the booking details for a hotel, including date range, room type, and pricing.
