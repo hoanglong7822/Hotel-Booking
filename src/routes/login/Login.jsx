@@ -37,10 +37,9 @@ const Login = () => {
 
     if (validations.validate('email', loginData.email)) {
       const response = await apiService.post('/api/users/login', loginData);
-      if (response && response.data.token) {
+      if (response && response.data.userDetails.token) {
         store.dispatch(login(response.data.userDetails));
         const userId = response.data.userDetails.id;
-        console.log('userId', response.data.userDetails);
         navigate(`/user-profile/${userId}`);
       } else if (response && response.errors.length > 0) {
         setErrorMessage(response.errors[0]);

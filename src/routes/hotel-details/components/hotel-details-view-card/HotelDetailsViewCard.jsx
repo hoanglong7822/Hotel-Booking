@@ -16,7 +16,10 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
     data: [],
   });
   const [currentReviewsPage, setCurrentReviewPage] = useState(1);
-
+  const [submitStatus, setSubmitStatus] = useState(false);
+  const handleSetSubmitStatus = () => {
+    setSubmitStatus((prev) => !prev);
+  };
   const handlePageChange = (page) => {
     setCurrentReviewPage(page);
   };
@@ -42,7 +45,8 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
     const fetchHotelReviews = async () => {
       const response = await apiService.post(
         `/api/hotel/${hotelDetails.hotelCode}/reviews`,
-        { currentPage: currentReviewsPage }
+
+        { currentPage: currentReviewsPage, hotelId: hotelDetails._id }
       );
       if (response && response.data) {
         setReviewData({
@@ -54,7 +58,12 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
       }
     };
     fetchHotelReviews();
-  }, [hotelDetails.hotelCode, currentReviewsPage]);
+  }, [
+    hotelDetails.hotelCode,
+    currentReviewsPage,
+    hotelDetails._id,
+    submitStatus,
+  ]);
   return (
     <div className="flex items-start justify-center flex-wrap md:flex-nowrap container mx-auto p-4">
       <div className="w-[800px] bg-white shadow-lg rounded-lg overflow-hidden">
@@ -79,12 +88,11 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
               {hotelDetails.subtitle}
             </p>
             <div className="mt-2 space-y-2">
-              <p className="text-gray-700">Mô tả</p>
-              {/* {hotelDetails.description.map((line, index) => (
+              {hotelDetails.description.map((line, index) => (
                 <p key={index} className="text-gray-700">
                   {line}
                 </p>
-              ))} */}
+              ))}
             </div>
             <div className="flex justify-between items-center mt-4">
               <div>
@@ -97,11 +105,12 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
         </div>
 
         <UserReviews
-          hotelCode={hotelDetails.hotelCode}
+          hotelCode={hotelDetails._id}
           reviewData={reviewData}
           handlePageChange={handlePageChange}
           handlePreviousPageChange={handlePreviousPageChange}
           handleNextPageChange={handleNextPageChange}
+          handleSetSubmitStatus={handleSetSubmitStatus}
         />
       </div>
       <HotelBookingDetailsCard hotelCode={hotelDetails.hotelCode} />

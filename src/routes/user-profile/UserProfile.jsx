@@ -26,6 +26,9 @@ const UserProfile = () => {
   const userDetails = useSelector((state) => {
     return state.auth.user;
   });
+  const token = useSelector((state) => {
+    return state.auth.user.token;
+  });
   const navigate = useNavigate();
   const wrapperRef = useRef();
   const buttonRef = useRef();
@@ -65,9 +68,13 @@ const UserProfile = () => {
   useEffect(() => {
     const getInitialData = async () => {
       const userId = userDetails.id;
-      const userBookingsDataResponse = await apiService.post(
-        '/api/users/bookings',
-        { userId: userId }
+      const userBookingsDataResponse = await apiService.get(
+        `/api/users/bookings/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       const userPaymentMethodsResponse = await apiService.get(
         '/api/users/payment-methods'
@@ -88,7 +95,7 @@ const UserProfile = () => {
       }
     };
     getInitialData();
-  }, [userDetails]);
+  }, [userDetails, token]);
 
   return (
     <>

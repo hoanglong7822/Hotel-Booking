@@ -2,10 +2,11 @@ import Review from './components/Review';
 import React, { useState } from 'react';
 import RatingsOverview from './components/RatingsOverview';
 import UserRatingsSelector from './components/UserRatingsSelector';
-import { networkAdapter } from 'services/NetworkAdapter';
 import Toast from 'components/ux/toast/Toast';
 import PaginationController from 'components/ux/pagination-controller/PaginationController';
 import Loader from 'components/ux/loader/loader';
+import { useSelector } from 'react-redux';
+import apiService from 'services/request';
 /**
  * Renders the user reviews component.
  *
@@ -19,6 +20,7 @@ const UserReviews = ({
   handlePageChange,
   handlePreviousPageChange,
   handleNextPageChange,
+  handleSetSubmitStatus,
 }) => {
   const [userRating, setUserRating] = useState(0);
 
@@ -28,6 +30,10 @@ const UserReviews = ({
     useState(false);
 
   const [toastMessage, setToastMessage] = useState('');
+
+  const reviewerName = useSelector((state) => {
+    return state.auth.user.lastName;
+  });
 
   /**
    * Handles the selected user rating.
@@ -42,6 +48,7 @@ const UserReviews = ({
   };
 
   const handleReviewSubmit = async () => {
+    console.log('okj');
     if (userRating === 0) {
       setToastMessage({
         type: 'error',
@@ -49,16 +56,21 @@ const UserReviews = ({
       });
       return;
     }
-    // TODO: Add validation for userRating and userReview
-    const response = await networkAdapter.put('/api/hotel/add-review', {
+    let currentDate = new Date();
+    const response = await apiService.post('/api/hotel/add-review', {
       rating: userRating,
       review: userReview,
+      date: currentDate,
+      reviewerName: reviewerName,
+      hotelId: hotelCode,
     });
+    console.log(response);
     if (response && response.errors.length === 0 && response.data.status) {
       setToastMessage({
         type: 'success',
         message: response.data.status,
       });
+      handleSetSubmitStatus();
     } else {
       setToastMessage({
         type: 'error',
