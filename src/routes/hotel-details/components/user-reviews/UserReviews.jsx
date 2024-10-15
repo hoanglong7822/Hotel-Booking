@@ -5,8 +5,9 @@ import UserRatingsSelector from './components/UserRatingsSelector';
 import Toast from 'components/ux/toast/Toast';
 import PaginationController from 'components/ux/pagination-controller/PaginationController';
 import Loader from 'components/ux/loader/loader';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import apiService from 'services/request';
+import { store } from '../../../../redux/store';
 /**
  * Renders the user reviews component.
  *
@@ -31,14 +32,17 @@ const UserReviews = ({
 
   const [toastMessage, setToastMessage] = useState('');
 
-  const reviewerName = useSelector((state) => {
-    if (state.auth === true) {
-      return state.auth.user.lastName;
-    } else {
-      return '';
-    }
-  });
-
+  // const reviewerName = useSelector((state) => {
+  //   if (state.auth === true) {
+  //     return state.auth.user.lastName;
+  //   } else {
+  //     return '';
+  //   }
+  // });
+  let reviewerName = '';
+  if (store.getState().auth.auth === true) {
+    reviewerName = store.getState().auth.auth.user.lastName;
+  }
   /**
    * Handles the selected user rating.
    * @param {number} rate - The rating value.
