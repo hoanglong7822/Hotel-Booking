@@ -348,7 +348,10 @@ const HotelsSearch = () => {
 
   return (
     <div className="hotels">
-      <div className="bg-brand px-2 lg:h-[120px] h-[220px] flex items-center justify-center">
+      <div
+        style={{ marginTop: '56px' }}
+        className=" bg-brand px-2 lg:h-[120px] h-[220px] flex items-center justify-center"
+      >
         <GlobalSearchBox
           locationInputValue={locationInputValue}
           locationTypeheadResults={filteredTypeheadResults}

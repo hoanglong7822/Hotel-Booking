@@ -17,8 +17,8 @@ const GlobalNavbar = (props) => {
   };
 
   return (
-    <div className="relative flex flex-wrap justify-between items-center px-4 md:px-12 global-navbar__container bg-brand brand-divider-bottom shadow-md">
-      <div className="flex">
+    <div className="fixed top-0 left-0 w-full z-10 flex flex-wrap justify-between items-center px-4 md:px-12 global-navbar__container bg-brand brand-divider-bottom shadow-md">
+      <div className="flex" style={{ backgroundColor: 'gray' }}>
         <Link to="/">
           <img src={logo} alt="site logo" className="site-logo__img" />
         </Link>

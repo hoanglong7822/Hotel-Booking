@@ -19,9 +19,7 @@ const HamburgerMenu = (props) => {
   return (
     <div
       data-testid="hamburger-menu"
-      className={`bg-brand shadow-2xl z-20 ${
-        isVisible ? 'fixed right-0 w-1/2 top-0 h-screen' : 'hidden'
-      }`}
+      className={`bg-brand shadow-2xl z-20 ${isVisible ? 'fixed right-0 w-1/2 top-0 h-screen' : 'hidden'}`}
     >
       <div className="absolute right-5 top-2">
         <FontAwesomeIcon
