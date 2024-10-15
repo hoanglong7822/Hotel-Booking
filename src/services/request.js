@@ -1,5 +1,7 @@
 import axios from 'axios';
 const URL = 'https://hotel-booking-uedl.onrender.com';
+// const URL = 'http://localhost:3030'
+
 const apiService = {
   async get(endpoint, params = {}) {
     try {

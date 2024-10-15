@@ -32,7 +32,11 @@ const UserReviews = ({
   const [toastMessage, setToastMessage] = useState('');
 
   const reviewerName = useSelector((state) => {
-    return state.auth.user.lastName;
+    if (state.auth === true) {
+      return state.auth.user.lastName;
+    } else {
+      return '';
+    }
   });
 
   /**
