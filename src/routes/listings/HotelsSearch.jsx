@@ -228,13 +228,13 @@ const HotelsSearch = () => {
         },
       ],
     });
-    if (hotelsResultsResponse) {
+    if (hotelsResultsResponse.status === 200) {
       setHotelsResults({
         isLoading: false,
-        data: hotelsResultsResponse.data.elements,
-        errors: hotelsResultsResponse.errors,
-        metadata: hotelsResultsResponse.metadata,
-        pagination: hotelsResultsResponse.paging,
+        data: hotelsResultsResponse.data.data.elements,
+        errors: hotelsResultsResponse.data.errors,
+        metadata: hotelsResultsResponse.data.data.metadata,
+        pagination: hotelsResultsResponse.data.paging,
       });
     }
   };

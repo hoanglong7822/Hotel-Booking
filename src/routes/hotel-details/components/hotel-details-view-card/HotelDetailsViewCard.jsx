@@ -45,15 +45,14 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
     const fetchHotelReviews = async () => {
       const response = await apiService.post(
         `/api/hotel/${hotelDetails.hotelCode}/reviews`,
-
         { currentPage: currentReviewsPage, hotelId: hotelDetails._id }
       );
-      if (response && response.data) {
+      if (response.status === 200) {
         setReviewData({
           isLoading: false,
-          data: response.data.elements,
-          metadata: response.metadata,
-          pagination: response.paging,
+          data: response.data.data.elements,
+          metadata: response.data.metadata,
+          pagination: response.data.paging,
         });
       }
     };

@@ -99,8 +99,8 @@ const HotelBookingDetailsCard = ({ hotelCode, hotelDetails }) => {
           `/api/hotel/${hotelCode}/booking/enquiry`,
           params
         );
-        if (response && response.data) {
-          setBookingDetails(response.data);
+        if (response === 200) {
+          setBookingDetails(response.data.data);
         }
       }
     };

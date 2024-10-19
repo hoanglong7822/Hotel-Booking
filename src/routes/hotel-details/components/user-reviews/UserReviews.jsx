@@ -73,10 +73,10 @@ const UserReviews = ({
       hotelId: hotelCode,
     });
     console.log(response);
-    if (response && response.errors.length === 0 && response.data.status) {
+    if (response.status(200)) {
       setToastMessage({
         type: 'success',
-        message: response.data.status,
+        message: response.data.data.status,
       });
       handleSetSubmitStatus();
     } else {

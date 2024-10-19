@@ -34,15 +34,13 @@ const Login = () => {
    */
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-
     if (validations.validate('email', loginData.email)) {
       const response = await apiService.post('/api/users/login', loginData);
-      if (response && response.data.userDetails.token) {
-        store.dispatch(login(response.data.userDetails));
-        const userId = response.data.userDetails.id;
+      console.log(response.status);
+      if (response.status === 200) {
+        store.dispatch(login(response.data.data.userDetails));
+        const userId = response.data.data.userDetails.id;
         navigate(`/user-profile/${userId}`);
-      } else if (response && response.errors.length > 0) {
-        setErrorMessage(response.errors[0]);
       }
     } else {
       setErrorMessage(LOGIN_MESSAGES.FAILED);
