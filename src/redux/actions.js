@@ -11,3 +11,9 @@ export function logOut() {
     type: Types.logOut,
   };
 }
+export function checkOutInformation(data) {
+  return {
+    type: Types.checkOut,
+    payload: data,
+  };
+}

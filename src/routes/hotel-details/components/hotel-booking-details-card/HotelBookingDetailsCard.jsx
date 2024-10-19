@@ -16,11 +16,10 @@ import { useSelector } from 'react-redux';
  * @param {Object} props - The component's props.
  * @param {string} props.hotelCode - The unique code for the hotel.
  */
-const HotelBookingDetailsCard = ({ hotelCode }) => {
+const HotelBookingDetailsCard = ({ hotelCode, hotelDetails }) => {
   // State for date picker visibility
-
   const [isDatePickerVisible, setisDatePickerVisible] = useState(false);
-
+  const [room, setRoom] = useState([]);
   const navigate = useNavigate();
   const userDetails = useSelector((state) => {
     return state.auth.user;
@@ -36,27 +35,37 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
       key: 'selection',
     },
   ]);
-
   // State for selected room, guests, and rooms
   const [selectedRoom, setSelectedRoom] = useState({
-    value: '1 King Bed Standard Non Smoking',
-    label: '1 King Bed Standard Non Smoking',
+    value: '',
+    label: '',
+    roomId: '',
   });
   const [selectedGuests, setSelectedGuests] = useState({
     value: 2,
     label: '2 guests',
   });
   const [selectedRooms, setSelectedRooms] = useState({
-    value: 1,
-    label: '1 room',
+    value: 0,
+    label: '0 room',
   });
-
+  useEffect(() => {
+    let arrRoom = [];
+    hotelDetails.roomTypes.forEach((element) => {
+      const newArr = {
+        roomId: element.roomId,
+        value: element.roomType,
+        label: element.roomType,
+      };
+      arrRoom.push(newArr);
+    });
+    setRoom(arrRoom);
+  }, [hotelDetails.roomTypes, hotelCode]);
   // State for pricing and booking details
   const [total, setTotal] = useState(0);
   const [taxes, setTaxes] = useState(0);
   const [bookingPeriodDays, setBookingPeriodDays] = useState(1);
   const [bookingDetails, setBookingDetails] = useState({});
-
   // Options for guests and rooms
   const guestOptions = Array.from(
     { length: bookingDetails.maxGuestsAllowed },
@@ -66,12 +75,6 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
     { length: bookingDetails.maxRoomsAllowedPerGuest },
     (_, i) => ({ value: i + 1, label: `${i + 1} room` })
   );
-  const roomOptions = [
-    {
-      value: '1 King Bed Standard Non Smoking',
-      label: '1 King Bed Standard Non Smoking',
-    },
-  ];
   // Handlers for select changes
   const handleRoomTypeChange = (selectedOption) => {
     setSelectedRoom(selectedOption);
@@ -84,8 +87,25 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
     setSelectedRooms(selectedOption);
     calculatePrices();
   };
-
-  // Handler for date picker visibility toggle
+  useEffect(() => {
+    const checkFormValidity = async () => {
+      if (dateRange[0].endDate && selectedRoom.value !== '') {
+        const params = {
+          start_date: dateRange[0].startDate,
+          end_date: dateRange[0].endDate,
+          roomId: selectedRoom.roomId,
+        };
+        const response = await apiService.post(
+          `/api/hotel/${hotelCode}/booking/enquiry`,
+          params
+        );
+        if (response && response.data) {
+          setBookingDetails(response.data);
+        }
+      }
+    };
+    checkFormValidity();
+  }, [selectedRoom, dateRange, hotelCode]);
   const onDatePickerIconClick = () => {
     setisDatePickerVisible(!isDatePickerVisible);
   };
@@ -119,9 +139,9 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
       parseFloat(totalGst)
     ).toFixed(2);
     if (!isNaN(totalPrice)) {
-      setTotal(`${formatPrice(totalPrice)} INR`);
+      setTotal(`${formatPrice(totalPrice)} VND`);
     }
-    setTaxes(`${formatPrice(totalGst)} INR`);
+    setTaxes(`${formatPrice(totalGst)} VND`);
   };
 
   const onBookingConfirm = () => {
@@ -140,6 +160,7 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
           checkOut,
           guests: selectedGuests.value,
           rooms: selectedRooms.value,
+          roomId: selectedRoom.roomId,
           hotelName: bookingDetails.name.replaceAll(' ', '-'), // url friendly hotel name
         }
       : {
@@ -149,6 +170,7 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
           checkOut,
           guests: selectedGuests.value,
           rooms: selectedRooms.value,
+          roomId: selectedRoom.roomId,
           hotelName: bookingDetails.name.replaceAll(' ', '-'), // url friendly hotel name
         };
     const url = `/checkout?${queryString.stringify(queryParams)}`;
@@ -172,36 +194,12 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingPeriodDays, selectedRooms, selectedRoom, bookingDetails]);
 
-  // Effect for fetching booking details
-  useEffect(() => {
-    const getBookingDetails = async () => {
-      const response = await apiService.get(
-        `/api/hotel/${hotelCode}/booking/enquiry`
-      );
-      if (response && response.data) {
-        setBookingDetails(response.data);
-      }
-    };
-    getBookingDetails();
-  }, [hotelCode]);
-
   return (
     <div className="mx-2 bg-white shadow-xl rounded-xl overflow-hidden mt-2 md:mt-0 w-full md:w-[380px]">
       <div className="px-6 py-4 bg-brand text-white">
         <h2 className="text-xl font-bold">Booking Details</h2>
       </div>
       <div className="p-6 text-sm md:text-base">
-        {/* Total Price */}
-        <div className="mb-4">
-          <div className="text-lg font-semibold text-gray-800 mb-1">
-            Total Price
-          </div>
-          <div className="text-xl font-bold text-indigo-600">{total}</div>
-          <div className="text-sm text-green-600">
-            {bookingDetails.cancellationPolicy}
-          </div>
-        </div>
-
         {/* Dates & Time */}
         <div className="mb-4">
           <div className="font-semibold text-gray-800">Dates & Time</div>
@@ -216,10 +214,18 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
             />
           </div>
         </div>
-
+        {/* Room Type */}
+        <div className="mb-4">
+          <div className="font-semibold text-gray-800">Room Type</div>
+          <Select
+            value={selectedRoom}
+            onChange={handleRoomTypeChange}
+            options={room}
+          />
+        </div>
         {/* Reservation */}
         <div className="mb-4">
-          <div className="font-semibold text-gray-800">Reservation</div>
+          <div className="font-semibold text-gray-800">Rooms available</div>
           <Select
             value={selectedRooms}
             onChange={handleRoomsNumberChange}
@@ -233,21 +239,11 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
           />
         </div>
 
-        {/* Room Type */}
-        <div className="mb-4">
-          <div className="font-semibold text-gray-800">Room Type</div>
-          <Select
-            value={selectedRoom}
-            onChange={handleRoomTypeChange}
-            options={roomOptions}
-          />
-        </div>
-
         {/* Per day rate */}
         <div className="mb-4">
           <div className="font-semibold text-gray-800">Per day rate</div>
           <div className="text-gray-600">
-            {formatPrice(bookingDetails.currentNightRate)} INR
+            {formatPrice(bookingDetails.currentNightRate)} VND
           </div>
         </div>
 
@@ -256,6 +252,16 @@ const HotelBookingDetailsCard = ({ hotelCode }) => {
           <div className="font-semibold text-gray-800">Taxes</div>
           <div className="text-gray-600">{taxes}</div>
           <div className="text-xs text-gray-500">{DEFAULT_TAX_DETAILS}</div>
+        </div>
+        {/* Total Price */}
+        <div className="mb-4">
+          <div className="text-lg font-semibold text-gray-800 mb-1">
+            Total Price
+          </div>
+          <div className="text-xl font-bold text-indigo-600">{total}</div>
+          <div className="text-sm text-green-600">
+            {bookingDetails.cancellationPolicy}
+          </div>
         </div>
 
         {errorMessage && (

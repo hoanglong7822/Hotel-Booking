@@ -8,6 +8,8 @@ import Loader from 'components/ux/loader/loader';
 import Toast from 'components/ux/toast/Toast';
 import apiService from 'services/request';
 import { useSelector } from 'react-redux';
+import { store } from '../../redux/store';
+import { checkOutInformation } from '../../redux/actions';
 /**
  * Checkout component for processing payments and collecting user information.
  *
@@ -41,6 +43,7 @@ const Checkout = () => {
   const hotelCode = searchParams.get('hotelCode');
   const hotelName = searchParams.get('hotelName');
   const rooms = searchParams.get('rooms');
+  const roomId = searchParams.get('roomId');
   const userId = searchParams.get('userId');
   const total = searchParams.get('total');
   const checkoutData = {
@@ -52,6 +55,7 @@ const Checkout = () => {
     hotelCode,
     hotelName,
     rooms,
+    roomId,
   };
   const dismissToast = () => {
     setToastMessage('');
@@ -70,12 +74,8 @@ const Checkout = () => {
   });
 
   // Format the check-in and check-out date and time
-  const checkInDateTime = `${getReadableMonthFormat(
-    searchParams.get('checkIn')
-  )}, ${location.state?.checkInTime}`;
-  const checkOutDateTime = `${getReadableMonthFormat(
-    searchParams.get('checkOut')
-  )}, ${location.state?.checkOutTime}`;
+  const checkInDateTime = `${getReadableMonthFormat(searchParams.get('checkIn'))}, ${location.state?.checkInTime}`;
+  const checkOutDateTime = `${getReadableMonthFormat(searchParams.get('checkOut'))}, ${location.state?.checkOutTime}`;
 
   useEffect(() => {
     const locationState = location.state;
@@ -109,6 +109,8 @@ const Checkout = () => {
    * @todo Implement form submission loading state.
    * @todo Implement form submission error state.
    */
+  console.log('checkoutData', checkoutData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
@@ -125,7 +127,6 @@ const Checkout = () => {
     if (!isValid) {
       return; // Stop form submission if there are errors
     }
-
     setIsSubmitDisabled(true);
     setPaymentConfirmationDetails({
       isLoading: true,
@@ -139,6 +140,7 @@ const Checkout = () => {
       if (checkoutData) {
         await apiService.post('/api/users/createBooking', checkoutData);
       }
+      store.dispatch(checkOutInformation(checkoutData));
       setPaymentConfirmationDetails({
         isLoading: false,
         data: response.data,
@@ -158,9 +160,11 @@ const Checkout = () => {
       });
     }
   };
-
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div
+      style={{ marginTop: '50px' }}
+      className=" flex flex-col justify-center items-center"
+    >
       <FinalBookingSummary
         hotelName={searchParams.get('hotelName').replaceAll('-', ' ')}
         checkIn={checkInDateTime}

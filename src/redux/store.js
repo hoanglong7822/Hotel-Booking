@@ -2,12 +2,14 @@ import { combineReducers, createStore } from 'redux';
 import authReducer from './authReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import checkOutReducer from './checkOutReducer';
 const persistConfig = {
   key: 'root',
   storage,
 };
 const rootReducer = combineReducers({
   auth: authReducer,
+  checkOut: checkOutReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const ReactReduxDevTools =

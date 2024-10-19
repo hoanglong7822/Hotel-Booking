@@ -6,7 +6,7 @@ import React from 'react';
  */
 const AboutUs = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div style={{ marginTop: '50px' }} className=" container mx-auto px-4 py-8">
       <h1 className="text-4xl font-extrabold text-brand mb-2">About Us</h1>
       <p className="text-lg mb-8">
         Welcome to <span className="text-brand">STAY BOOKER</span>, where we are

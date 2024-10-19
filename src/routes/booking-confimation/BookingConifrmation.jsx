@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Represents the booking confirmation component.
@@ -13,11 +14,9 @@ import { useRef } from 'react';
  */
 const BookingConfirmation = () => {
   const contentToPrint = useRef(null);
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const [bookingDetails, setBookingDetails] = useState(null);
-
+  const bookingDetails = useSelector((state) => state.checkOut);
+  console.log(bookingDetails);
   /**
    * Handles the print event.
    * @function
@@ -27,17 +26,6 @@ const BookingConfirmation = () => {
     documentTitle: 'Booking Confirmation',
     removeAfterPrint: true,
   });
-
-  // Set booking details from location state passed from the previous page(checkout page)
-  useEffect(() => {
-    if (location.state) {
-      const { bookingDetails } = location.state.confirmationData;
-      setBookingDetails(bookingDetails);
-    } else {
-      navigate('/');
-    }
-  }, [bookingDetails, location.state, navigate]);
-
   return (
     <div className="md:mx-auto max-w-[800px] my-40">
       <div className="flex justify-between mx-2 rounded-md my-2">
@@ -76,7 +64,7 @@ const BookingConfirmation = () => {
           your stay.
         </p>
         <div className="mt-4 flex justify-center flex-wrap items-center">
-          {bookingDetails &&
+          {/* {bookingDetails &&
             bookingDetails.map((detail, index) => (
               <div key={index} className="border-r-2 px-4">
                 <p className="text-gray-600 text-sm">{detail.label}</p>
@@ -84,7 +72,43 @@ const BookingConfirmation = () => {
                   {detail.value}
                 </span>
               </div>
-            ))}
+            ))} */}
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Hotel Name</p>
+            <span className="text-gray-600 text-sm font-bold">
+              {bookingDetails.hotelName}
+            </span>
+          </div>
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Check In</p>
+            <span className="text-gray-600 text-sm font-bold">
+              {bookingDetails.checkIn}
+            </span>
+          </div>
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Check Out</p>
+            <span className="text-gray-600 text-sm font-bold">
+              {bookingDetails.checkOut}
+            </span>
+          </div>
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Room Id</p>
+            <span className="text-gray-600 text-sm font-bold ">
+              {bookingDetails.roomId}
+            </span>
+          </div>
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Quantity</p>
+            <span className="text-gray-600 text-sm font-bold">
+              {bookingDetails.rooms}
+            </span>
+          </div>
+          <div className="border-r-2 px-4">
+            <p className="text-gray-600 text-sm">Total</p>
+            <span className="text-gray-600 text-sm font-bold">
+              {bookingDetails.total}
+            </span>
+          </div>
         </div>
       </div>
     </div>
