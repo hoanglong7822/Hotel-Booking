@@ -1,6 +1,6 @@
 import axios from 'axios';
-// const URL = 'https://hotel-booking-uedl.onrender.com';
-const URL = 'http://localhost:3030';
+const URL = 'https://hotel-booking-uedl.onrender.com';
+// const URL = 'http://localhost:3030';
 
 const apiService = {
   async get(endpoint, params = {}) {
@@ -13,7 +13,6 @@ const apiService = {
   },
   async post(endpoint, params = {}) {
     try {
-      console.log(params);
       const data = await axios.post(URL + endpoint, params);
       return data.data;
     } catch (error) {
