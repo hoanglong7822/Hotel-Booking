@@ -50,7 +50,7 @@ const HotelDetailsViewCard = ({ hotelDetails }) => {
       if (response.status === 200) {
         setReviewData({
           isLoading: false,
-          data: response.data.data.elements,
+          data: response.data.data,
           metadata: response.data.metadata,
           pagination: response.data.paging,
         });

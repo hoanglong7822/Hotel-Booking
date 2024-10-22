@@ -36,10 +36,9 @@ const Login = () => {
     e.preventDefault();
     if (validations.validate('email', loginData.email)) {
       const response = await apiService.post('/api/users/login', loginData);
-      console.log(response.status);
       if (response.status === 200) {
-        store.dispatch(login(response.data.data.userDetails));
-        const userId = response.data.data.userDetails.id;
+        store.dispatch(login(response.data.userDetails));
+        const userId = response.data.userDetails.id;
         navigate(`/user-profile/${userId}`);
       }
     } else {

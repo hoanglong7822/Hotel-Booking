@@ -16,7 +16,6 @@ const BookingConfirmation = () => {
   const contentToPrint = useRef(null);
   const navigate = useNavigate();
   const bookingDetails = useSelector((state) => state.checkOut);
-  console.log(bookingDetails);
   /**
    * Handles the print event.
    * @function

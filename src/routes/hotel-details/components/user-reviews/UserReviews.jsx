@@ -56,7 +56,6 @@ const UserReviews = ({
   };
 
   const handleReviewSubmit = async () => {
-    console.log('okj');
     if (userRating === 0) {
       setToastMessage({
         type: 'error',
@@ -72,7 +71,6 @@ const UserReviews = ({
       reviewerName: reviewerName,
       hotelId: hotelCode,
     });
-    console.log(response);
     if (response.status(200)) {
       setToastMessage({
         type: 'success',

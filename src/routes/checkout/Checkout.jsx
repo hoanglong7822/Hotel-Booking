@@ -109,7 +109,6 @@ const Checkout = () => {
    * @todo Implement form submission loading state.
    * @todo Implement form submission error state.
    */
-  console.log('checkoutData', checkoutData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
