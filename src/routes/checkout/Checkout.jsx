@@ -135,7 +135,7 @@ const Checkout = () => {
       '/api/payments/confirmation',
       formData
     );
-    if (response && response.data && response.errors.length === 0) {
+    if (response.status === 200) {
       if (checkoutData) {
         await apiService.post('/api/users/createBooking', checkoutData);
       }
@@ -290,7 +290,7 @@ const Checkout = () => {
               type="submit"
               disabled={isSubmitDisabled}
             >
-              Pay ₹ {location.state?.total}
+              Pay {location.state?.total} VND
             </button>
           </div>
         </form>

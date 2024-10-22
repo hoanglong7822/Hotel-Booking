@@ -74,7 +74,7 @@ const HotelViewCard = (props) => {
             {ratings} <FontAwesomeIcon icon={faStar} />
           </h4>
           <p className="text-slate-600 font-bold whitespace-nowrap">
-            ₹ {formatPrice(price)}
+            {formatPrice(price)} VND
           </p>
         </div>
         <button

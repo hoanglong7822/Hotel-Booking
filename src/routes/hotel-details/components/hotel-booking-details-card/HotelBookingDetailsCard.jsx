@@ -131,17 +131,16 @@ const HotelBookingDetailsCard = ({ hotelCode, hotelDetails }) => {
    */
   const calculatePrices = () => {
     const pricePerNight = bookingDetails.currentNightRate * selectedRooms.value;
-    const gstRate =
-      pricePerNight <= 2500 ? 0.12 : pricePerNight > 7500 ? 0.18 : 0.12;
-    const totalGst = (pricePerNight * bookingPeriodDays * gstRate).toFixed(2);
-    const totalPrice = (
-      pricePerNight * bookingPeriodDays +
-      parseFloat(totalGst)
-    ).toFixed(2);
+    // const gstRate =
+    //   pricePerNight <= 2500 ? 0.12 : pricePerNight > 7500 ? 0.18 : 0.12;
+    // const totalGst = (pricePerNight * bookingPeriodDays * gstRate).toFixed(2);
+    // const totalPrice = (pricePerNight * bookingPeriodDays +parseFloat(totalGst)).toFixed(2);
+    const tax = bookingDetails.currentNightRate * selectedRooms.value * 0.05;
+    const totalPrice = pricePerNight + tax;
     if (!isNaN(totalPrice)) {
       setTotal(`${formatPrice(totalPrice)} VND`);
     }
-    setTaxes(`${formatPrice(totalGst)} VND`);
+    setTaxes(`${formatPrice(tax)} VND`);
   };
 
   const onBookingConfirm = () => {

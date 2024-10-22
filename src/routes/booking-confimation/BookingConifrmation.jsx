@@ -1,7 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
@@ -14,7 +12,6 @@ import { useSelector } from 'react-redux';
  */
 const BookingConfirmation = () => {
   const contentToPrint = useRef(null);
-  const navigate = useNavigate();
   const bookingDetails = useSelector((state) => state.checkOut);
   /**
    * Handles the print event.
